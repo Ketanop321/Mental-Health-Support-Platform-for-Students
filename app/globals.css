@@ -24,6 +24,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 262.1 83.3% 57.8%;
     --radius: 0.75rem;
+    --font-size-multiplier: 100%;
 
     /* Chart colors */
     --chart-1: 262.1 83.3% 57.8%;
@@ -71,6 +72,39 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Accessibility: Font size */
+  html {
+    font-size: calc(16px * var(--font-size-multiplier, 100%) / 100%);
+  }
+
+  /* Accessibility: High contrast */
+  .high-contrast {
+    --foreground: 0 0% 0%;
+    --background: 0 0% 100%;
+    --primary: 262.1 100% 50%;
+    --muted-foreground: 0 0% 20%;
+    --border: 0 0% 0%;
+  }
+
+  .dark.high-contrast {
+    --foreground: 0 0% 100%;
+    --background: 0 0% 0%;
+    --primary: 262.1 100% 70%;
+    --muted-foreground: 0 0% 80%;
+    --border: 0 0% 100%;
+  }
+
+  /* Accessibility: Reduced motion */
+  .reduced-motion * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  /* Accessibility: Dyslexic font */
+  .dyslexic-font {
+    font-family: "OpenDyslexic", sans-serif;
   }
 }
 
@@ -134,4 +168,39 @@
 /* Memory game card flip */
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+/* Focus outline for better accessibility */
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Skip to content link for keyboard users */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

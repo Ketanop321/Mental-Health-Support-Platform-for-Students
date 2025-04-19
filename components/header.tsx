@@ -18,6 +18,7 @@ import {
   Gamepad2,
   Music,
   Users,
+  Sparkles,
 } from "lucide-react"
 import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
@@ -30,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import AccessibilityControls from "@/components/accessibility-controls"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: <BarChart3 className="h-4 w-4 mr-2" /> },
@@ -38,6 +40,7 @@ const navigation = [
   { name: "Videos", href: "/videos", icon: <Video className="h-4 w-4 mr-2" /> },
   { name: "Games", href: "/games", icon: <Gamepad2 className="h-4 w-4 mr-2" /> },
   { name: "Music", href: "/music", icon: <Music className="h-4 w-4 mr-2" /> },
+  { name: "Meditation", href: "/meditation", icon: <Sparkles className="h-4 w-4 mr-2" /> },
   { name: "Chat Support", href: "/chat", icon: <MessageCircle className="h-4 w-4 mr-2" /> },
   { name: "Community", href: "/community", icon: <Users className="h-4 w-4 mr-2" /> },
   { name: "Resources", href: "/resources", icon: <BookMarked className="h-4 w-4 mr-2" /> },
@@ -50,6 +53,11 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Skip to content link for keyboard users */}
+      <a href="#main-content" className="skip-to-content">
+        Skip to content
+      </a>
+
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
@@ -78,6 +86,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
+          <AccessibilityControls />
           <ModeToggle />
 
           {session ? (

@@ -9,11 +9,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 export default function AddMood() {
   const [moodValue, setMoodValue] = useState(3)
   const [stressValue, setStressValue] = useState(3)
   const [notes, setNotes] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -87,21 +89,41 @@ export default function AddMood() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
 
-    // In a real app, you would save this to your database
-    console.log({
-      mood: moodValue,
-      stress: stressValue,
-      notes,
-      date: new Date().toISOString(),
-    })
+    try {
+      const response = await fetch("/api/mood", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mood: moodValue,
+          stress: stressValue,
+          notes,
+        }),
+      })
 
-    toast({
-      title: "Mood logged successfully",
-      description: "Your mood has been recorded for today.",
-    })
+      if (!response.ok) {
+        throw new Error("Failed to save mood entry")
+      }
 
-    router.push("/mood-tracker")
+      toast({
+        title: "Mood logged successfully",
+        description: "Your mood has been recorded for today.",
+      })
+
+      router.push("/mood-tracker")
+    } catch (error) {
+      console.error("Error saving mood entry:", error)
+      toast({
+        title: "Error",
+        description: "Failed to save mood entry. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -171,8 +193,14 @@ export default function AddMood() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
-              Save Mood Entry
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                </>
+              ) : (
+                "Save Mood Entry"
+              )}
             </Button>
           </CardFooter>
         </form>

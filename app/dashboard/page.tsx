@@ -2,10 +2,11 @@ import type React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight, BarChart3, BookOpen, MessageCircle, Sparkles } from "lucide-react"
+import { ArrowRight, MessageCircle, Video, Gamepad2, Music } from "lucide-react"
 import MoodChart from "@/components/mood-chart"
 import RecentJournalEntries from "@/components/recent-journal-entries"
 import WellnessScore from "@/components/wellness-score"
+import Image from "next/image"
 
 export default function Dashboard() {
   return (
@@ -24,6 +25,16 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Inspirational Quote */}
+      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-none">
+        <CardContent className="p-6">
+          <blockquote className="text-center italic">
+            "Self-care is not self-indulgence, it is self-preservation."
+            <footer className="text-sm mt-2 text-muted-foreground">— Audre Lorde</footer>
+          </blockquote>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
@@ -73,31 +84,102 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             <RecommendationItem
-              icon={<BookOpen className="h-5 w-5 text-primary" />}
-              title="5-Minute Journaling Exercise"
-              description="A quick gratitude practice to boost your mood"
-              href="/resources/journaling-exercise"
+              icon={<Video className="h-5 w-5 text-primary" />}
+              title="Anxiety Relief Videos"
+              description="Watch expert-guided anxiety relief techniques"
+              href="/videos"
             />
             <RecommendationItem
-              icon={<BarChart3 className="h-5 w-5 text-primary" />}
-              title="Understanding Stress Patterns"
-              description="Learn to identify your stress triggers"
-              href="/resources/stress-patterns"
+              icon={<Gamepad2 className="h-5 w-5 text-primary" />}
+              title="Breathing Exercise"
+              description="Try our interactive breathing exercise for stress relief"
+              href="/games/breathing"
+            />
+            <RecommendationItem
+              icon={<Music className="h-5 w-5 text-primary" />}
+              title="Calming Music"
+              description="Listen to soothing tracks for better focus and relaxation"
+              href="/music"
             />
             <RecommendationItem
               icon={<MessageCircle className="h-5 w-5 text-primary" />}
-              title="Guided Meditation"
-              description="10-minute meditation for anxiety relief"
-              href="/resources/guided-meditation"
-            />
-            <RecommendationItem
-              icon={<Sparkles className="h-5 w-5 text-primary" />}
-              title="Sleep Improvement Tips"
-              description="Practical strategies for better sleep"
-              href="/resources/sleep-tips"
+              title="Community Support"
+              description="Connect with peers facing similar challenges"
+              href="/community"
             />
           </CardContent>
         </Card>
+      </div>
+
+      {/* Featured Wellness Activities */}
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Featured Wellness Activities</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link href="/games/breathing" className="group">
+            <div className="relative rounded-lg overflow-hidden aspect-video">
+              <Image
+                src="/placeholder.svg?height=200&width=300"
+                alt="Breathing Exercise"
+                fill
+                className="object-cover transition-transform group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                <div className="p-3 text-white">
+                  <h3 className="font-medium">Breathing Exercise</h3>
+                  <p className="text-xs text-white/80">Reduce anxiety in minutes</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+          <Link href="/videos" className="group">
+            <div className="relative rounded-lg overflow-hidden aspect-video">
+              <Image
+                src="/placeholder.svg?height=200&width=300"
+                alt="Meditation Videos"
+                fill
+                className="object-cover transition-transform group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                <div className="p-3 text-white">
+                  <h3 className="font-medium">Meditation Videos</h3>
+                  <p className="text-xs text-white/80">Guided practices for mindfulness</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+          <Link href="/games/color-therapy" className="group">
+            <div className="relative rounded-lg overflow-hidden aspect-video">
+              <Image
+                src="/placeholder.svg?height=200&width=300"
+                alt="Color Therapy"
+                fill
+                className="object-cover transition-transform group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                <div className="p-3 text-white">
+                  <h3 className="font-medium">Color Therapy</h3>
+                  <p className="text-xs text-white/80">Express yourself through art</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+          <Link href="/music" className="group">
+            <div className="relative rounded-lg overflow-hidden aspect-video">
+              <Image
+                src="/placeholder.svg?height=200&width=300"
+                alt="Calming Music"
+                fill
+                className="object-cover transition-transform group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                <div className="p-3 text-white">
+                  <h3 className="font-medium">Calming Music</h3>
+                  <p className="text-xs text-white/80">Soothing sounds for relaxation</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
       </div>
     </div>
   )

@@ -27,7 +27,9 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <div className="min-h-screen bg-background">
               <Header />
-              <main className="container mx-auto py-4 px-4 md:px-6">{children}</main>
+              <main id="main-content" className="container mx-auto py-4 px-4 md:px-6">
+                {children}
+              </main>
               <Toaster />
             </div>
           </ThemeProvider>

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
+import { X, Loader2 } from "lucide-react"
 
 export default function NewJournalEntry() {
   const [title, setTitle] = useState("")
@@ -18,6 +18,7 @@ export default function NewJournalEntry() {
   const [tag, setTag] = useState("")
   const [tags, setTags] = useState<string[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [sentiment, setSentiment] = useState<string | null>(null)
   const { toast } = useToast()
   const router = useRouter()
@@ -40,7 +41,7 @@ export default function NewJournalEntry() {
     }
   }
 
-  const analyzeSentiment = () => {
+  const analyzeSentiment = async () => {
     if (!content.trim()) {
       toast({
         title: "Error",
@@ -52,51 +53,36 @@ export default function NewJournalEntry() {
 
     setIsAnalyzing(true)
 
-    // In a real app, you would call an API for sentiment analysis
-    // This is a mock implementation
-    setTimeout(() => {
-      // Simple mock sentiment analysis based on positive and negative words
-      const positiveWords = ["happy", "good", "great", "excellent", "excited", "love", "enjoy", "positive", "success"]
-      const negativeWords = ["sad", "excellent", "excited", "love", "enjoy", "positive", "success"]
-      const negativeWordsList = [
-        "sad",
-        "bad",
-        "terrible",
-        "awful",
-        "disappointed",
-        "hate",
-        "stress",
-        "anxiety",
-        "negative",
-        "failure",
-      ]
-
-      const contentLower = content.toLowerCase()
-      let positiveCount = 0
-      let negativeCount = 0
-
-      positiveWords.forEach((word) => {
-        const regex = new RegExp(`\\b${word}\\b`, "g")
-        const matches = contentLower.match(regex)
-        if (matches) positiveCount += matches.length
+    try {
+      const response = await fetch("/api/journal/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }),
       })
 
-      negativeWordsList.forEach((word) => {
-        const regex = new RegExp(`\\b${word}\\b`, "g")
-        const matches = contentLower.match(regex)
-        if (matches) negativeCount += matches.length
-      })
+      if (!response.ok) {
+        throw new Error("Failed to analyze sentiment")
+      }
 
-      const result = positiveCount > negativeCount ? "positive" : negativeCount > positiveCount ? "negative" : "neutral"
-
-      setSentiment(result)
-      setIsAnalyzing(false)
+      const data = await response.json()
+      setSentiment(data.sentiment)
 
       toast({
         title: "Sentiment Analysis Complete",
-        description: `Your entry appears to have a ${result} sentiment.`,
+        description: `Your entry appears to have a ${data.sentiment} sentiment.`,
       })
-    }, 1500)
+    } catch (error) {
+      console.error("Error analyzing sentiment:", error)
+      toast({
+        title: "Error",
+        description: "Failed to analyze sentiment. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsAnalyzing(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -111,21 +97,43 @@ export default function NewJournalEntry() {
       return
     }
 
-    // In a real app, you would save this to your database
-    console.log({
-      title,
-      content,
-      tags,
-      sentiment,
-      date: new Date().toISOString(),
-    })
+    setIsSubmitting(true)
 
-    toast({
-      title: "Journal entry saved",
-      description: "Your journal entry has been saved successfully.",
-    })
+    try {
+      const response = await fetch("/api/journal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          tags,
+        }),
+      })
 
-    router.push("/journal")
+      if (!response.ok) {
+        throw new Error("Failed to save journal entry")
+      }
+
+      const data = await response.json()
+
+      toast({
+        title: "Journal entry saved",
+        description: "Your journal entry has been saved successfully.",
+      })
+
+      router.push("/journal")
+    } catch (error) {
+      console.error("Error saving journal entry:", error)
+      toast({
+        title: "Error",
+        description: "Failed to save journal entry. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -223,13 +231,25 @@ export default function NewJournalEntry() {
               type="button"
               variant="outline"
               onClick={analyzeSentiment}
-              disabled={isAnalyzing || !content.trim()}
+              disabled={isAnalyzing || !content.trim() || isSubmitting}
               className="w-full sm:w-auto"
             >
-              {isAnalyzing ? "Analyzing..." : "Analyze Sentiment"}
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyzing...
+                </>
+              ) : (
+                "Analyze Sentiment"
+              )}
             </Button>
-            <Button type="submit" className="w-full sm:w-auto">
-              Save Journal Entry
+            <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                </>
+              ) : (
+                "Save Journal Entry"
+              )}
             </Button>
           </CardFooter>
         </form>
