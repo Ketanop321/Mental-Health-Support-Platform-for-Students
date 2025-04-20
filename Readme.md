@@ -73,7 +73,7 @@ pnpm install
 Or if you prefer npm:
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
 
 Or yarn:
