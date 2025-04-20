@@ -7,6 +7,7 @@ import MoodChart from "@/components/mood-chart"
 import RecentJournalEntries from "@/components/recent-journal-entries"
 import WellnessScore from "@/components/wellness-score"
 import Image from "next/image"
+import QuotesCarousel from "@/components/quotes-carousel"
 
 export default function Dashboard() {
   return (
@@ -29,10 +30,7 @@ export default function Dashboard() {
       {/* Inspirational Quote */}
       <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-none">
         <CardContent className="p-6">
-          <blockquote className="text-center italic">
-            "Self-care is not self-indulgence, it is self-preservation."
-            <footer className="text-sm mt-2 text-muted-foreground">— Audre Lorde</footer>
-          </blockquote>
+          <QuotesCarousel />
         </CardContent>
       </Card>
 

@@ -19,6 +19,8 @@ import {
   Music,
   Users,
   Sparkles,
+  ChevronDown,
+  MoreHorizontal,
 } from "lucide-react"
 import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
@@ -33,13 +35,16 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import AccessibilityControls from "@/components/accessibility-controls"
 
-const navigation = [
+const mainNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: <BarChart3 className="h-4 w-4 mr-2" /> },
   { name: "Mood Tracker", href: "/mood-tracker", icon: <BarChart3 className="h-4 w-4 mr-2" /> },
   { name: "Journal", href: "/journal", icon: <BookOpen className="h-4 w-4 mr-2" /> },
   { name: "Videos", href: "/videos", icon: <Video className="h-4 w-4 mr-2" /> },
   { name: "Games", href: "/games", icon: <Gamepad2 className="h-4 w-4 mr-2" /> },
   { name: "Music", href: "/music", icon: <Music className="h-4 w-4 mr-2" /> },
+]
+
+const moreNavigation = [
   { name: "Meditation", href: "/meditation", icon: <Sparkles className="h-4 w-4 mr-2" /> },
   { name: "Chat Support", href: "/chat", icon: <MessageCircle className="h-4 w-4 mr-2" /> },
   { name: "Community", href: "/community", icon: <Users className="h-4 w-4 mr-2" /> },
@@ -62,15 +67,15 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
             <span className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">MC</span>
+              <span className="text-primary-foreground font-bold">SU</span>
             </span>
-            <span className="font-bold text-xl hidden md:inline-block">MindfulCampus</span>
+            <span className="font-bold text-xl hidden md:inline-block">Sukun</span>
           </Link>
         </div>
 
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-6 overflow-x-auto">
-          {navigation.map((item) => (
+          {mainNavigation.map((item) => (
             <Link
               key={item.name}
               href={item.href}
@@ -83,6 +88,41 @@ export default function Header() {
               {item.name}
             </Link>
           ))}
+          
+          {/* More dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className={cn(
+                  "text-sm font-medium transition-colors flex items-center whitespace-nowrap",
+                  moreNavigation.some(item => pathname === item.href) 
+                    ? "text-foreground" 
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <MoreHorizontal className="h-4 w-4 mr-2" />
+                More
+                <ChevronDown className="h-4 w-4 ml-1 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-48">
+              {moreNavigation.map((item) => (
+                <DropdownMenuItem key={item.name} asChild>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "w-full flex items-center",
+                      pathname === item.href ? "bg-accent" : ""
+                    )}
+                  >
+                    {item.icon}
+                    {item.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -132,10 +172,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile navigation */}
+      {/* Mobile navigation - shows all items */}
       {mobileMenuOpen && (
         <div className="md:hidden py-4 px-6 space-y-4 border-t">
-          {navigation.map((item) => (
+          {[...mainNavigation, ...moreNavigation].map((item) => (
             <Link
               key={item.name}
               href={item.href}
